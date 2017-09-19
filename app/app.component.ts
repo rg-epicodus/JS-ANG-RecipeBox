@@ -3,25 +3,19 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-root',
   template: `
-  <style>
-  li {
-    width: 400px;
-  }
-  </style>
   <div class="container">
     <h1>Recipe Box - Current as of: {{month}}/{{day}}/{{year}}</h1>
     <h3>{{currentFocus}}</h3>
-    <ul>
-      <li [class]="completeColor(currentRecipe)" (click)="haveItems(currentRecipe)" *ngFor="let currentRecipe of recipe">{{currentRecipe.title}} <button (click)="editRecipe(currentRecipe)">Edit!</button>
-        <ul>
-          <li *ngFor="let currentRecipe of recipe">{{currentRecipe.ingredients}}</li>
-        </ul>
-        <ol>
-          <li *ngFor="let currentRecipe of recipe">{{currentRecipe.directions}}</li>
-        </ol>
-      </li>
-    </ul>
-    <hr>
+    <li [class]="completeColor(currentRecipe)" (click)="haveItems(currentRecipe)" *ngFor='let currentRecipe of recipe'(click)="showContent(currentRecipe)">{{currentRecipe.title}} <button (click)="editRecipe(currentRecipe)">Edit!</button>
+      <div *ngIf="currentRecipe.content">
+        <h4>Ingredients</h4>
+            <li *ngFor='let ingredients of currentRecipe.ingredients'>{{ingredients}}</li>
+      </div>
+      <div *ngIf="currentRecipe.content">
+        <h4>Directions</h4>
+            <li *ngFor='let direction of currentRecipe.directions'>{{direction}}</li>
+      </div>
+    </li>
     <div>
       <div *ngIf="selectedRecipe">
         <h3>{{selectedRecipe.title}}</h3>
@@ -40,6 +34,7 @@ import { Component } from '@angular/core';
   `
 })
 
+
 export class AppComponent {
   currentFocus: string = 'Recipes';
   currentTime = new Date();
@@ -47,9 +42,9 @@ export class AppComponent {
   day: number = this.currentTime.getDate();
   year: number = this.currentTime.getFullYear();
   recipe: Recipe[] = [
-    new Recipe("Rich's Tomato Sauce",2, "sauce ingredient", " sauce directions"),
-    new Recipe("Rich's Ribs",2, "rib ingredient", " rib directions"),
-    new Recipe("Rich's Amish White Bread",2, "bread ingredient", "bread directions")
+    new Recipe("Rich's Pesto Sauce",2, ["sauce ingredient"], ["sauce directions"]),
+    new Recipe("Rich's Ribs",2, ["rib ingredient"], [" rib directions"]),
+    new Recipe("Rich's Amish White Bread",2, ["bread ingredient"], ["bread directions"])
   ];
   selectedRecipe = null;
 
@@ -80,9 +75,15 @@ export class AppComponent {
     this.selectedRecipe = null;
   }
 
+  showContent(clickedRecipe: Recipe){
+    console.log("content clicked");
+    clickedRecipe.content = !clickedRecipe.content;
+    }
+
 }
 
 export class Recipe {
+  public content: boolean = false;
   public done: boolean = false;
-  constructor(public title: string, public complete: number, public ingredients: string, public directions: string) { }
+  constructor(public title: string, public complete: number, public ingredients: String[], public directions: String[]) {}
 }
