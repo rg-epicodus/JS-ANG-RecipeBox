@@ -12,10 +12,13 @@ import { Component } from '@angular/core';
     <h1>Recipe Box - Current as of: {{month}}/{{day}}/{{year}}</h1>
     <h3>{{currentFocus}}</h3>
     <ul>
-      <li [class]="priorityColor(currentRecipe)" (click)="haveItems(currentRecipe)" *ngFor="let currentRecipe of recipe">{{currentRecipe.title}} <button (click)="editRecipe(currentRecipe)">Edit!</button>
+      <li [class]="completeColor(currentRecipe)" (click)="haveItems(currentRecipe)" *ngFor="let currentRecipe of recipe">{{currentRecipe.title}} <button (click)="editRecipe(currentRecipe)">Edit!</button>
         <ul>
           <li *ngFor="let currentRecipe of recipe">{{currentRecipe.ingredients}}</li>
         </ul>
+        <ol>
+          <li *ngFor="let currentRecipe of recipe">{{currentRecipe.directions}}</li>
+        </ol>
       </li>
     </ul>
     <hr>
@@ -28,8 +31,8 @@ import { Component } from '@angular/core';
         <label>Enter Recipe Title:</label>
         <input [(ngModel)]="selectedRecipe.title">
         <label>Do you have the ingredients? (yes/no):</label><br>
-        <input type="radio" [(ngModel)]="selectedRecipe.priority" [value]="1">Yes (Have Ingredients)<br>
-        <input type="radio" [(ngModel)]="selectedRecipe.priority" [value]="2">No (Need Ingredients)<br>
+        <input type="radio" [(ngModel)]="selectedRecipe.complete" [value]="1">Yes (Have Ingredients)<br>
+        <input type="radio" [(ngModel)]="selectedRecipe.complete" [value]="2">No (Need Ingredients)<br>
         <button (click)="finishedEditing()">Done</button>
       </div>
     </div>
@@ -56,16 +59,17 @@ export class AppComponent {
 
   haveItems(clickedRecipe: Recipe) {
     if(clickedRecipe.done === true) {
-      alert("This recipe is done!");
+      alert("This recipe is ready to make!");
     } else {
-      alert("This recipe is not done. Better get to work!");
+      alert("This recipe is not ready. Better get to shopping!");
     }
   }
 
-  priorityColor(currentRecipe){
-    if (currentRecipe.priority === 2){
+  completeColor(currentRecipe){
+    if (currentRecipe.complete === 2){
       return "bg-danger";
-    } else if (currentRecipe.priority === 1) {
+    } else if (currentRecipe.complete === 1) {
+      this.selectedRecipe.done = true;
       return  "bg-success";
     } else {
       return "bg-info";
@@ -80,5 +84,5 @@ export class AppComponent {
 
 export class Recipe {
   public done: boolean = false;
-  constructor(public title: string, public priority: number, public ingredients: string, public directions: string) { }
+  constructor(public title: string, public complete: number, public ingredients: string, public directions: string) { }
 }
